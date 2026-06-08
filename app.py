@@ -9,14 +9,6 @@ st.set_page_config(page_title="Mental Health Dashboard", layout="wide")
 # Load the data file
 df = pd.read_csv("mental_health.csv")
 
-# App Title & Project Objectives
-st.title("🧠 Employee Mental Health Analytics Dashboard")
-st.markdown("### 📊 Project Objectives")
-st.markdown("1. **Analyze Key Patterns:** Identify the primary factors contributing to employee burnout and mental health struggles.")
-st.markdown("2. **Evaluate Support Systems:** Measure the effectiveness and accessibility of current company wellness resources.")
-st.markdown("3. **Provide Actionable Insights:** Deliver data-driven recommendations to help leadership improve workplace well-being.")
-st.write("---")
-
 # Quick Summary Numbers Section
 st.subheader("📈 Quick Health Metrics")
 m1, m2, m3 = st.columns(3)
@@ -63,3 +55,5 @@ st.write("---")
 st.subheader("📋 Explore the Raw Dataset")
 st.markdown("Use the table below to scroll through, search, or filter the employee response data.")
 st.dataframe(df, use_container_width=True)
+st.sidebar.markdown("---")
+st.sidebar.markdown("👥 **Created by:** Syasya Amalia & Hajar")
