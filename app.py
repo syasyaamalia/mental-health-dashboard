@@ -11,20 +11,25 @@ df = pd.read_csv("mental_health.csv")
 
 # App Title & Project Objectives
 st.title("🧠 Employee Mental Health Analytics Dashboard")
+st.markdown("### 📊 Project Objectives")
+st.markdown("1. **Analyze Key Patterns:** Identify the primary factors contributing to employee burnout and mental health struggles.")
+st.markdown("2. **Evaluate Support Systems:** Measure the effectiveness and accessibility of current company wellness resources.")
+st.markdown("3. **Provide Actionable Insights:** Deliver data-driven recommendations to help leadership improve workplace well-being.")
+st.write("---")
 
 # Quick Summary Numbers Section
 st.subheader("📈 Quick Health Metrics")
 m1, m2, m3 = st.columns(3)
 
 with m1:
-    st.metric(label="Total Employees Analyzed", value=len(df))
+    st.metric(label="Total Employees Analyzed", value=len(df))
 with m2:
-    avg_hours = round(df["Work_Hours"].mean(), 1)
-    st.metric(label="Average Weekly Work Hours", value=f"{avg_hours} hrs")
+    avg_hours = round(df["Work_Hours"].mean(), 1)
+    st.metric(label="Average Weekly Work Hours", value=f"{avg_hours} hrs")
 with m3:
-    # Counts how many rows have a high stress indicator
-    high_stress_count = len(df[df["Stress_Level"].astype(str).str.contains("High|Very High|4|5", case=False, na=False)])
-    st.metric(label="High Stress Reports", value=high_stress_count)
+    # Counts how many rows have a high stress indicator
+    high_stress_count = len(df[df["Stress_Level"].astype(str).str.contains("High|Very High|4|5", case=False, na=False)])
+    st.metric(label="High Stress Reports", value=high_stress_count)
 
 st.write("---")
 
@@ -32,17 +37,17 @@ st.write("---")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("💼 Mental Health Condition by Occupation")
-    fig, ax = plt.subplots(figsize=(6, 4))
-    sns.countplot(data=df, x="Occupation", hue="Mental_Health_Condition", ax=ax, palette="Set2")
-    plt.xticks(rotation=45)
-    st.pyplot(fig)
+    st.subheader("💼 Mental Health Condition by Occupation")
+    fig, ax = plt.subplots(figsize=(6, 4))
+    sns.countplot(data=df, x="Occupation", hue="Mental_Health_Condition", ax=ax, palette="Set2")
+    plt.xticks(rotation=45)
+    st.pyplot(fig)
 
 with col2:
-    st.subheader("📈 Stress Level vs Condition Severity")
-    fig, ax = plt.subplots(figsize=(6, 4))
-    sns.countplot(data=df, x="Severity", hue="Stress_Level", ax=ax, palette="Pastel1")
-    st.pyplot(fig)
+    st.subheader("📈 Stress Level vs Condition Severity")
+    fig, ax = plt.subplots(figsize=(6, 4))
+    sns.countplot(data=df, x="Severity", hue="Stress_Level", ax=ax, palette="Pastel1")
+    st.pyplot(fig)
 
 st.write("---")
 
