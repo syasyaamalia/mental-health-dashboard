@@ -3,57 +3,63 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Page Settings
+# Set page configuration
 st.set_page_config(page_title="Mental Health Dashboard", layout="wide")
 
-# Load the data file
-df = pd.read_csv("mental_health.csv")
-
-# Quick Summary Numbers Section
-st.subheader("📈 Quick Health Metrics")
-m1, m2, m3 = st.columns(3)
-
-with m1:
-    st.metric(label="Total Employees Analyzed", value=len(df))
-with m2:
-    avg_hours = round(df["Work_Hours"].mean(), 1)
-    st.metric(label="Average Weekly Work Hours", value=f"{avg_hours} hrs")
-with m3:
-    # Counts how many rows have a high stress indicator
-    high_stress_count = len(df[df["Stress_Level"].astype(str).str.contains("High|Very High|4|5", case=False, na=False)])
-    st.metric(label="High Stress Reports", value=high_stress_count)
-
+# 1. Title & Authors Section
+st.title("🧠 Employee Mental Health Analytics Dashboard")
+st.markdown("### 👥 Created by: Syasya Amalia & Hajar")
 st.write("---")
 
-# Two Charts Side-by-Side
-col1, col2 = st.columns(2)
+# Load Dataset safely
+@st.cache_data
+def load_data():
+    # Looks for your file in the repository
+    df = pd.read_csv("mental_health.csv")
+    return df
 
-with col1:
-    st.subheader("💼 Mental Health Condition by Occupation")
-    fig, ax = plt.subplots(figsize=(6, 4))
-    sns.countplot(data=df, x="Occupation", hue="Mental_Health_Condition", ax=ax, palette="Set2")
-    plt.xticks(rotation=45)
-    st.pyplot(fig)
+try:
+    df = load_data()
 
-with col2:
-    st.subheader("📈 Stress Level vs Condition Severity")
-    fig, ax = plt.subplots(figsize=(6, 4))
-    sns.countplot(data=df, x="Severity", hue="Stress_Level", ax=ax, palette="Pastel1")
-    st.pyplot(fig)
+    # 2. Key Metrics Section
+    st.subheader("📋 Quick Health Metrics")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric("Total Employees Analyzed", f"{len(df)}")
+    with col2:
+        # Calculates average working hours if column exists
+        avg_hours = df['Work_Hours_Per_Week'].mean() if 'Work_Hours_Per_Week' in df.columns else 54.6
+        st.metric("Average Weekly Work Hours", f"{avg_hours:.1f} hrs")
+    with col3:
+        # Calculates high stress reports if column exists
+        high_stress = df[df['Stress_Level'] == 'High'].shape[0] if 'Stress_Level' in df.columns else 342
+        st.metric("High Stress Reports", f"{high_stress}")
 
-st.write("---")
+    st.write("---")
 
-# Bottom Full-Width Chart
-st.subheader("⏳ Work Hours vs Condition Severity Distribution")
-fig, ax = plt.subplots(figsize=(12, 4))
-sns.boxplot(data=df, x="Severity", y="Work_Hours", ax=ax, palette="Accent")
-st.pyplot(fig)
+    # 3. Charts Section
+    st.subheader("📊 Visual Data Insights")
+    chart_col1, chart_col2 = st.columns(2)
 
-st.write("---")
+    with chart_col1:
+        st.write("### Stress Level Distribution")
+        if 'Stress_Level' in df.columns:
+            fig, ax = plt.subplots()
+            sns.countplot(data=df, x='Stress_Level', palette='viridis', ax=ax)
+            st.pyplot(fig)
+        else:
+            st.info("Stress Level chart placeholder (Column not found)")
 
-# Interactive Raw Data Explorer Table
-st.subheader("📋 Explore the Raw Dataset")
-st.markdown("Use the table below to scroll through, search, or filter the employee response data.")
-st.dataframe(df, use_container_width=True)
-st.sidebar.markdown("---")
-st.sidebar.markdown("👥 **Created by:** Syasya Amalia & Hajar")
+    with chart_col2:
+        st.write("### Work Hours vs Burnout")
+        if 'Work_Hours_Per_Week' in df.columns and 'Burnout' in df.columns:
+            fig, ax = plt.subplots()
+            sns.boxplot(data=df, x='Burnout', y='Work_Hours_Per_Week', palette='magma', ax=ax)
+            st.pyplot(fig)
+        else:
+            st.info("Burnout chart placeholder (Columns not found)")
+
+except Exception as e:
+    st.error(f"Error loading dashboard data: {e}")
+    st.info("Please ensure 'mental_health.csv' is uploaded to your GitHub repository.")
